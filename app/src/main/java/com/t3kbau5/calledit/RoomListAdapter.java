@@ -10,6 +10,8 @@ import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,15 +61,45 @@ public class RoomListAdapter extends BaseAdapter {
         }else{
             ll = (LinearLayout) inflater.inflate(R.layout.listitem_room, null);
         }
-        ((TextView) ll.findViewById(R.id.text_name)).setText(roomData.get(position).name);
+
+        final Room room = roomData.get(position);
+
+        ((TextView) ll.findViewById(R.id.text_name)).setText(room.name);
         ll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, RoomInfoActivity.class);
-                intent.putExtra("room", roomData.get(position));
+                intent.putExtra("room", room);
                 context.startActivity(intent);
             }
         });
+
+        if(room.hasPhone){
+            ll.findViewById(R.id.hasPhone).setVisibility(View.VISIBLE);
+        }else{
+            ll.findViewById(R.id.hasPhone).setVisibility(View.INVISIBLE);
+        }
+
+        if(room.hasTV){
+            ll.findViewById(R.id.hasPhone).setVisibility(View.VISIBLE);
+        }else{
+            ll.findViewById(R.id.hasPhone).setVisibility(View.INVISIBLE);
+        }
+
+        TextView sizeText = (TextView) ll.findViewById(R.id.roomSize);
+
+        switch(room.size){
+            case 1:
+                sizeText.setText("S");
+                break;
+            case 2:
+                sizeText.setText("M");
+                break;
+            case 3:
+                sizeText.setText("L");
+                break;
+        }
+
         return ll;
     }
 }

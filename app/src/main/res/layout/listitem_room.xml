@@ -9,4 +9,26 @@
         android:layout_height="wrap_content"
         android:text="LIR 111"
         android:textAppearance="?android:textAppearanceLarge"/>
+
+    <ImageView
+        android:id="@+id/hasTV"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:visibility="invisible" />
+
+    <ImageView
+        android:id="@+id/hasPhone"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:visibility="invisible" />
+
+    <TextView
+        android:id="@+id/roomSize"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:textAppearance="?android:textAppearanceLarge"
+        android:background="@drawable/background_size_purple"
+        android:gravity="center_horizontal"
+        android:text="\?" />
+
 </LinearLayout>
