@@ -35,4 +35,14 @@
         android:layout_below="@+id/roomName"
         android:layout_toRightOf="@+id/roomImage"
         android:layout_toEndOf="@+id/roomImage" />
+    <Button
+        android:id="@+id/button_reserve"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/roomDescription"
+        android:layout_toRightOf="@+id/roomImage"
+        android:background="@drawable/background_roundbutton_purple"
+        android:textAppearance="?android:textAppearanceLarge"
+        android:textColor="@color/accent"
+        android:text="@string/btn_reserve"/>
 </RelativeLayout>

@@ -19,7 +19,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".RoomListActivity" />
-        <activity android:name=".RoomInfoActivity"></activity>
+        <activity android:name=".RoomInfoActivity" />
+        <activity android:name=".ReserveActivity"></activity>
     </application>
 
 </manifest>

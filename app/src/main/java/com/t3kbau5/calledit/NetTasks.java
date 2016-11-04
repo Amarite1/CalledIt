@@ -43,6 +43,7 @@ public class NetTasks {
                         room.description = roomJson.getString("Description");
                         room.pictureUrl = roomJson.getString("Picture");
                         room.id = roomJson.getInt("RoomID");
+                        room.determineAttributes();
                         rooms.add(room);
                     }
                 } catch (JSONException e) {

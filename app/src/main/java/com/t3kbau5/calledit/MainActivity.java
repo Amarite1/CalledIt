@@ -15,11 +15,20 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Button btn_reserve = (Button) findViewById(R.id.button_reserve);
         Button btn_rooms = (Button) findViewById(R.id.button_rooms);
         btn_rooms.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(_this, RoomListActivity.class);
+                _this.startActivity(intent);
+            }
+        });
+        btn_reserve.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(_this, ReserveActivity.class);
                 _this.startActivity(intent);
             }
         });

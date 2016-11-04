@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Called!t</string>
+    <string name="btn_reserve">Reserve</string>
 </resources>
