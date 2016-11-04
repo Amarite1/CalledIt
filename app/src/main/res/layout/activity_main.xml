@@ -9,8 +9,27 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.t3kbau5.calledit.MainActivity">
 
-    <TextView
+    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:text="Reserve a Room"
+        android:id="@+id/button_reserve"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/background_roundbutton_purple"
+        android:textAppearance="?android:textAppearanceLarge"
+        android:textColor="@color/accent"
+        android:padding="3dp" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="All Rooms"
+        android:id="@+id/button_rooms"
+        android:layout_below="@+id/button_reserve"
+        android:layout_marginTop="15dp"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/background_roundbutton_purple"
+        android:textAppearance="?android:textAppearanceLarge"
+        android:textColor="@color/accent"
+        android:padding="3dp"/>
 </RelativeLayout>
