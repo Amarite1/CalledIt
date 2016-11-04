@@ -2,6 +2,7 @@ package com.t3kbau5.calledit;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,7 +52,7 @@ public class RoomListAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         LinearLayout ll;
         if(convertView != null){
             ll = (LinearLayout) convertView;
@@ -59,6 +60,14 @@ public class RoomListAdapter extends BaseAdapter {
             ll = (LinearLayout) inflater.inflate(R.layout.listitem_room, null);
         }
         ((TextView) ll.findViewById(R.id.text_name)).setText(roomData.get(position).name);
+        ll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, RoomInfoActivity.class);
+                intent.putExtra("room", roomData.get(position));
+                context.startActivity(intent);
+            }
+        });
         return ll;
     }
 }
