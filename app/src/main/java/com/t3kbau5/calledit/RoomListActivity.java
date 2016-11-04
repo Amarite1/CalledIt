@@ -12,5 +12,6 @@ public class RoomListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_room_list);
         ListView list_rooms = (ListView) findViewById(R.id.list_rooms);
         list_rooms.setAdapter(new RoomListAdapter(this));
+        //getActionBar().setDisplayHomeAsUpEnabled(true);
     }
 }

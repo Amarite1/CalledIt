@@ -3,7 +3,7 @@ package com.t3kbau5.calledit;
 /**
  * Created by benwi on 2016-11-02.
  */
-public class RoomObject {
+public class Room {
     public String description = null;
     public String mapUrl = null;
     public String pictureUrl = null;

@@ -1,7 +1,7 @@
 package com.t3kbau5.calledit;
 
+import android.app.Activity;
 import android.content.Context;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,14 +19,15 @@ public class RoomListAdapter extends BaseAdapter {
 
     private Context context;
     private LayoutInflater inflater;
-    private List<RoomObject> roomData = new ArrayList<RoomObject>();
+    private List<Room> roomData = new ArrayList<Room>();
 
-    public RoomListAdapter(Context context){
-        this.context = context;
+    public RoomListAdapter(Activity activity){
+        this.context = activity;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        NetTasks.loadRooms(new NetTasks.RoomTaskListener() {
+        NetTasks nt = new NetTasks(activity);
+        nt.loadRooms(new NetTasks.RoomTaskListener() {
             @Override
-            public void roomsLoaded(List<RoomObject> rooms) {
+            public void roomsLoaded(List<Room> rooms) {
                 roomData = rooms;
                 notifyDataSetChanged();
                 notifyDataSetInvalidated();
