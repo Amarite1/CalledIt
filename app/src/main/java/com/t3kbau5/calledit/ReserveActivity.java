@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -12,17 +13,20 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 
 public class ReserveActivity extends AppCompatActivity {
 
     private Activity _this = this;
     private WebView webView;
     private SharedPreferences prefs;
+    private ProgressBar pb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +54,15 @@ public class ReserveActivity extends AppCompatActivity {
             cm.setCookie(prefs.getString("curl", ""), savedCookies);
         }
 
+        pb = (ProgressBar) findViewById(R.id.progressBar);
+
         webView.setWebViewClient(new WebViewClient(){
+
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap facIcon){
+                pb.setVisibility(View.VISIBLE);
+            }
+
             @Override
             public void onPageFinished(WebView view, String url) {
                 Log.d("wv", "opf");
@@ -61,8 +73,10 @@ public class ReserveActivity extends AppCompatActivity {
                     }
                     prefs.edit().putString("cookies", cm.getCookie(url)).putString("curl", url).apply();
                 }
+                pb.setVisibility(View.GONE);
             }
         });
+
         webView.loadUrl(url);
     }
 
@@ -108,5 +122,14 @@ public class ReserveActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed(){
+        if(webView.canGoBack()){
+            webView.goBack();
+        }else{
+            finish();
+        }
     }
 }

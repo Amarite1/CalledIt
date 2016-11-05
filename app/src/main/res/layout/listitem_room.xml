@@ -14,13 +14,15 @@
         android:id="@+id/hasTV"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:visibility="invisible" />
+        android:visibility="invisible"
+        android:src="@drawable/ic_tv_black_24dp"/>
 
     <ImageView
         android:id="@+id/hasPhone"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:visibility="invisible" />
+        android:visibility="invisible"
+        android:src="@drawable/ic_phone_black_24dp"/>
 
     <TextView
         android:id="@+id/roomSize"

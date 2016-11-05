@@ -10,6 +10,8 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -25,6 +27,10 @@ public class NetTasks {
 
     public interface RoomTaskListener{
         void roomsLoaded(List<Room> rooms);
+    }
+
+    public interface ReservationsTaskListener{
+        void reservationsLoaded();
     }
 
     public void loadRooms(final RoomTaskListener listener){
@@ -61,6 +67,27 @@ public class NetTasks {
             @Override
             public void onLoadError(int code) {
                 listener.roomsLoaded(null);
+            }
+        });
+    }
+
+    public void loadRoomReservations(Calendar date, int roomID, final ReservationsTaskListener listener){
+        NetWorker nw = new NetWorker();
+        nw.loadUrl("http://queensu.evanced.info/dibsapi/reservations/" + date.get(Calendar.YEAR) + "-" + date.get(Calendar.MONTH) + "-" + date.get(Calendar.DAY_OF_MONTH) + "/" + roomID, "text/json", new NetWorker.NetWorkerListener() {
+            @Override
+            public void onDataReceived(String data) {
+                try {
+                    JSONArray reservationData = new JSONArray(data);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    listener.reservationsLoaded();
+                }
+
+            }
+
+            @Override
+            public void onLoadError(int code) {
+                listener.reservationsLoaded();
             }
         });
     }

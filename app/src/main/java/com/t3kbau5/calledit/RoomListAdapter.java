@@ -24,7 +24,7 @@ public class RoomListAdapter extends BaseAdapter {
     private LayoutInflater inflater;
     private List<Room> roomData = new ArrayList<Room>();
 
-    public RoomListAdapter(Activity activity){
+    public RoomListAdapter(final Activity activity){
         this.context = activity;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         NetTasks nt = new NetTasks(activity);
@@ -34,6 +34,7 @@ public class RoomListAdapter extends BaseAdapter {
                 roomData = rooms;
                 notifyDataSetChanged();
                 notifyDataSetInvalidated();
+                activity.findViewById(R.id.progressBar).setVisibility(View.GONE);
             }
         });
     }
@@ -81,9 +82,9 @@ public class RoomListAdapter extends BaseAdapter {
         }
 
         if(room.hasTV){
-            ll.findViewById(R.id.hasPhone).setVisibility(View.VISIBLE);
+            ll.findViewById(R.id.hasTV).setVisibility(View.VISIBLE);
         }else{
-            ll.findViewById(R.id.hasPhone).setVisibility(View.INVISIBLE);
+            ll.findViewById(R.id.hasTV).setVisibility(View.INVISIBLE);
         }
 
         TextView sizeText = (TextView) ll.findViewById(R.id.roomSize);
