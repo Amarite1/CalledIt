@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.io.IOException;
@@ -67,6 +68,10 @@ public class RoomInfoActivity extends AppCompatActivity {
                 _this.finish();
             }
         });
+
+
+        ListView reservationsList = (ListView) findViewById(R.id.reservationsList);
+        reservationsList.setAdapter(new ScheduleAdapter(this, room.id));
 
     }
 

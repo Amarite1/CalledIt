@@ -27,6 +27,9 @@ public class ReserveActivity extends AppCompatActivity {
     private WebView webView;
     private SharedPreferences prefs;
     private ProgressBar pb;
+    private boolean tryPostAgain = false;
+    private String initialUrl;
+    String postData = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,9 +39,14 @@ public class ReserveActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
-        String url = "https://queensu.evanced.info/dibs/";
-        if(intent.hasExtra("roomID")){
-            url += "?space=" + intent.getIntExtra("roomID", -1);
+        initialUrl = "https://queensu.evanced.info/dibs/";
+
+        if(intent.hasExtra("postData")){
+            initialUrl +="registration";
+            postData = intent.getStringExtra("postData");
+
+        }else if(intent.hasExtra("roomID")){
+            initialUrl += "?space=" + intent.getIntExtra("roomID", -1);
         }
 
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -65,19 +73,26 @@ public class ReserveActivity extends AppCompatActivity {
 
             @Override
             public void onPageFinished(WebView view, String url) {
-                Log.d("wv", "opf");
                 if(webView.getUrl().toLowerCase().contains("login")){
-                    Log.d("wv", "login");
+
+                    if(postData != "") tryPostAgain = true;
+
                     if(prefs.contains("username")) {
                         webView.loadUrl("javascript:(function(){$('#txtUsername').val('" + prefs.getString("username", "") + "');})()");
                     }
                     prefs.edit().putString("cookies", cm.getCookie(url)).putString("curl", url).apply();
+                } else if(tryPostAgain){
+                    webView.postUrl(initialUrl, postData.getBytes());
                 }
                 pb.setVisibility(View.GONE);
             }
         });
 
-        webView.loadUrl(url);
+        if(postData != ""){
+            webView.postUrl(initialUrl, postData.getBytes());
+        }else {
+            webView.loadUrl(initialUrl);
+        }
     }
 
     @Override

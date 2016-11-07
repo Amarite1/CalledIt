@@ -30,7 +30,11 @@ public class NetTasks {
     }
 
     public interface ReservationsTaskListener{
-        void reservationsLoaded();
+        void reservationsLoaded(List<Reservation> reservations);
+    }
+
+    public interface HoursTaskListener{
+        void hoursLoaded(int[] hours);
     }
 
     public void loadRooms(final RoomTaskListener listener){
@@ -54,6 +58,12 @@ public class NetTasks {
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            listener.roomsLoaded(null);
+                        }
+                    });
                 }
 
                 activity.runOnUiThread(new Runnable() {
@@ -66,7 +76,12 @@ public class NetTasks {
 
             @Override
             public void onLoadError(int code) {
-                listener.roomsLoaded(null);
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        listener.roomsLoaded(null);
+                    }
+                });
             }
         });
     }
@@ -78,16 +93,94 @@ public class NetTasks {
             public void onDataReceived(String data) {
                 try {
                     JSONArray reservationData = new JSONArray(data);
+                    final List<Reservation> reservations = new ArrayList<Reservation>();
+                    for(int i=0;i<reservationData.length();i++){
+                        JSONObject reservationObject = reservationData.getJSONObject(i);
+                        Reservation reservation = new Reservation();
+
+                        String start = reservationObject.getString("StartTime").split("T")[1].replaceAll(":", "");
+                        reservation.start = Integer.parseInt(start);
+
+                        String end = reservationObject.getString("EndTime").split("T")[1].replaceAll(":", "");
+                        reservation.end = Integer.parseInt(end);
+
+                        reservations.add(reservation);
+                    }
+
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            listener.reservationsLoaded(reservations);
+                        }
+                    });
+
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    listener.reservationsLoaded();
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            listener.reservationsLoaded(null);
+                        }
+                    });
                 }
 
             }
 
             @Override
             public void onLoadError(int code) {
-                listener.reservationsLoaded();
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        listener.reservationsLoaded(null);
+                    }
+                });
+            }
+        });
+    }
+
+    public void loadRoomHours(Calendar date, int roomID, final HoursTaskListener listener){
+        NetWorker nw = new NetWorker();
+        nw.loadUrl("http://queensu.evanced.info/dibsapi/roomHours/" + date.get(Calendar.YEAR) + "-" + date.get(Calendar.MONTH) + "-" + date.get(Calendar.DAY_OF_MONTH) + "/" + roomID, "text/json", new NetWorker.NetWorkerListener() {
+            @Override
+            public void onDataReceived(String data) {
+                try {
+                    JSONArray hoursData = new JSONArray(data);
+                    final int[] hours = new int[2];
+                    JSONObject reservationObject = hoursData.getJSONObject(0);
+
+                    String start = reservationObject.getString("StartTime").split("T")[1].replaceAll(":", "");
+                    hours[0] = Integer.parseInt(start);
+
+                    String end = reservationObject.getString("EndTime").split("T")[1].replaceAll(":", "");
+                    hours[1] = Integer.parseInt(end);
+
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            listener.hoursLoaded(hours);
+                        }
+                    });
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            listener.hoursLoaded(null);
+                        }
+                    });
+                }
+
+            }
+
+            @Override
+            public void onLoadError(int code) {
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        listener.hoursLoaded(null);
+                    }
+                });
             }
         });
     }
