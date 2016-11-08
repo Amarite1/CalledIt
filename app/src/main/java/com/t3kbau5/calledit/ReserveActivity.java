@@ -73,7 +73,7 @@ public class ReserveActivity extends AppCompatActivity {
 
             @Override
             public void onPageFinished(WebView view, String url) {
-                if(webView.getUrl().toLowerCase().contains("login")){
+                if(url.toLowerCase().contains("login")){
 
                     if(postData != "") tryPostAgain = true;
 
@@ -81,7 +81,8 @@ public class ReserveActivity extends AppCompatActivity {
                         webView.loadUrl("javascript:(function(){$('#txtUsername').val('" + prefs.getString("username", "") + "');})()");
                     }
                     prefs.edit().putString("cookies", cm.getCookie(url)).putString("curl", url).apply();
-                } else if(tryPostAgain){
+                } else if(tryPostAgain && url.toLowerCase().contains("search")){
+                    tryPostAgain = false;
                     webView.postUrl(initialUrl, postData.getBytes());
                 }
                 pb.setVisibility(View.GONE);

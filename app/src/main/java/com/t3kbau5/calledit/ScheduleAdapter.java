@@ -2,7 +2,10 @@ package com.t3kbau5.calledit;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -13,6 +16,7 @@ import org.w3c.dom.Text;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -34,6 +38,7 @@ public class ScheduleAdapter extends BaseAdapter {
         nt.loadRoomHours(Calendar.getInstance(), roomID, new NetTasks.HoursTaskListener() {
             @Override
             public void hoursLoaded(int[] h) {
+                if(h == null) return;
                 hours=h;
                 notifyDataSetChanged();
                 notifyDataSetInvalidated();
@@ -63,7 +68,7 @@ public class ScheduleAdapter extends BaseAdapter {
     public Object getItem(int position) {
         if(reservations == null) return null;
         for(int i=0; i<reservations.size(); i++){
-            if(reservations.get(i).start == hours[0] + 10000*position){
+            if(reservations.get(i).start <= hours[0] + 10000*position && reservations.get(i).end > hours[0] + 10000*position){
                 return reservations.get(i);
             }
         }
@@ -90,24 +95,50 @@ public class ScheduleAdapter extends BaseAdapter {
             tv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    try {
-                        Intent intent = new Intent(context, ReserveActivity.class);
+                    AlertDialog.Builder adb = new AlertDialog.Builder(context);
+                    adb.setTitle("Select Duration");
 
-                        String postData = null;
-                        postData = generatePostData(position);
-                        intent.putExtra("postData", postData);
+                    CharSequence[] options;
 
-                        context.startActivity(intent);
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                        Toast.makeText(context, "Error generating URL!", Toast.LENGTH_LONG).show();
+                    if((position+2 < getCount() && getItem(position+2) == null) && (position+1 < getCount() && getItem(position+1) == null)){
+                        options = new CharSequence[]{"1 Hour", "2 Hours", "3 Hours"};
+                    }else if(position+1 < getCount() && getItem(position+1) == null){
+                        options = new CharSequence[]{"1 Hour", "2 Hours"};
+                    }else{
+                        options = new CharSequence[]{"1 Hour"};
                     }
+
+                    adb.setItems(options, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            try {
+                                Intent intent = new Intent(context, ReserveActivity.class);
+                                String postData = generatePostData(position, which+1);
+                                intent.putExtra("postData", postData);
+
+                                context.startActivity(intent);
+                                dialog.dismiss();
+                            } catch (UnsupportedEncodingException e) {
+                                e.printStackTrace();
+                                Toast.makeText(context, "Error generating URL!", Toast.LENGTH_LONG).show();
+                            }
+
+                        }
+                    });
+
+                    adb.show();
 
                 }
             });
         }else{
             Reservation res = (Reservation) slot;
             tv.setText(getTime(position) + " - Reserved (ends " + formatTime(res.end) + ")");
+            tv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(context, "Unable to reserve, someone else already has this time!", Toast.LENGTH_LONG).show();
+                }
+            });
         }
         return tv;
     }
@@ -127,17 +158,16 @@ public class ScheduleAdapter extends BaseAdapter {
         return tstr;
     }
 
-    private String generatePostData(int position) throws UnsupportedEncodingException {
+    private String generatePostData(int position, int duration) throws UnsupportedEncodingException {
         Calendar cal = Calendar.getInstance();
         String searchDate = cal.get(Calendar.YEAR) + "/" + cal.get(Calendar.MONTH) + "/" + cal.get(Calendar.DAY_OF_MONTH);
         String startTime = searchDate + "+" + getTime(position) + ":00";
 
-        /*startTime = URLEncoder.encode(startTime, "UTF8");
-        searchDate = URLEncoder.encode(searchDate, "UTF8");*/
-
-        String postData = "SelectedRoomSize=&SelectedStartTime=" + startTime + "&SelectedTime=1&SelectedRoomID=" + roomID;
+        String postData = "SelectedRoomSize=&SelectedStartTime=" + startTime + "&SelectedTime=" + duration + "&SelectedRoomID=" + roomID;
         postData += "&RoomIDPassedIn=True&SingleBuildingWorkflow=False&SelectedTimeSort=AnyTime&SelectedSearchDate=" + searchDate;
         postData += "&SelectedBuildingID=0";
+
+        Log.d("SAR", postData);
 
         return postData;
     }

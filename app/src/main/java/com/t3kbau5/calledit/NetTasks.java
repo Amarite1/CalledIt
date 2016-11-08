@@ -1,6 +1,7 @@
 package com.t3kbau5.calledit;
 
 import android.app.Activity;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -88,7 +89,7 @@ public class NetTasks {
 
     public void loadRoomReservations(Calendar date, int roomID, final ReservationsTaskListener listener){
         NetWorker nw = new NetWorker();
-        nw.loadUrl("http://queensu.evanced.info/dibsapi/reservations/" + date.get(Calendar.YEAR) + "-" + date.get(Calendar.MONTH) + "-" + date.get(Calendar.DAY_OF_MONTH) + "/" + roomID, "text/json", new NetWorker.NetWorkerListener() {
+        nw.loadUrl("http://queensu.evanced.info/dibsapi/reservations/" + date.get(Calendar.YEAR) + "-" + (date.get(Calendar.MONTH)+1) + "-" + date.get(Calendar.DAY_OF_MONTH) + "/" + roomID, "text/json", new NetWorker.NetWorkerListener() {
             @Override
             public void onDataReceived(String data) {
                 try {
@@ -140,12 +141,23 @@ public class NetTasks {
 
     public void loadRoomHours(Calendar date, int roomID, final HoursTaskListener listener){
         NetWorker nw = new NetWorker();
-        nw.loadUrl("http://queensu.evanced.info/dibsapi/roomHours/" + date.get(Calendar.YEAR) + "-" + date.get(Calendar.MONTH) + "-" + date.get(Calendar.DAY_OF_MONTH) + "/" + roomID, "text/json", new NetWorker.NetWorkerListener() {
+        String url = "http://queensu.evanced.info/dibsapi/roomHours/" + date.get(Calendar.YEAR) + "-" + (date.get(Calendar.MONTH)+1) + "-" + date.get(Calendar.DAY_OF_MONTH) + "/" + roomID;
+        Log.d("url", url);
+        nw.loadUrl(url, "text/json", new NetWorker.NetWorkerListener() {
             @Override
             public void onDataReceived(String data) {
                 try {
                     JSONArray hoursData = new JSONArray(data);
                     final int[] hours = new int[2];
+                    if(hoursData.length() < 1){
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                listener.hoursLoaded(null);
+                            }
+                        });
+                        return;
+                    }
                     JSONObject reservationObject = hoursData.getJSONObject(0);
 
                     String start = reservationObject.getString("StartTime").split("T")[1].replaceAll(":", "");
