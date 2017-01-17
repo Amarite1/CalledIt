@@ -12,11 +12,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -29,30 +25,17 @@ public class ScheduleAdapter extends BaseAdapter {
     private List<Reservation> reservations;
     private int roomID;
     private int[] hours = {0, 0};
+    private Calendar calendar;
+    private NetTasks nt;
 
     public ScheduleAdapter(Activity activity, final int roomID){
         context = activity;
         this.roomID = roomID;
 
-        final NetTasks nt = new NetTasks(activity);
-        nt.loadRoomHours(Calendar.getInstance(), roomID, new NetTasks.HoursTaskListener() {
-            @Override
-            public void hoursLoaded(int[] h) {
-                if(h == null) return;
-                hours=h;
-                notifyDataSetChanged();
-                notifyDataSetInvalidated();
-                nt.loadRoomReservations(Calendar.getInstance(), roomID, new NetTasks.ReservationsTaskListener() {
-                    @Override
-                    public void reservationsLoaded(List<Reservation> res) {
-                        reservations=res;
-                        notifyDataSetChanged();
-                        notifyDataSetInvalidated();
-                    }
-                });
-            }
-        });
+        calendar = calendar.getInstance();
 
+        nt = new NetTasks(activity);
+        update();
     }
 
     private int getNumberHours(){
@@ -159,16 +142,44 @@ public class ScheduleAdapter extends BaseAdapter {
     }
 
     private String generatePostData(int position, int duration) throws UnsupportedEncodingException {
-        Calendar cal = Calendar.getInstance();
-        String searchDate = cal.get(Calendar.YEAR) + "/" + cal.get(Calendar.MONTH) + "/" + cal.get(Calendar.DAY_OF_MONTH);
+        String searchDate = calendar.get(Calendar.YEAR) + "/" + (calendar.get(Calendar.MONTH)+1) + "/" + calendar.get(Calendar.DAY_OF_MONTH);
         String startTime = searchDate + "+" + getTime(position) + ":00";
 
         String postData = "SelectedRoomSize=&SelectedStartTime=" + startTime + "&SelectedTime=" + duration + "&SelectedRoomID=" + roomID;
-        postData += "&RoomIDPassedIn=True&SingleBuildingWorkflow=False&SelectedTimeSort=AnyTime&SelectedSearchDate=" + searchDate;
+        postData += "&RoomIDPassedIn=True&SingleBuildingWorkflow=True&SelectedTimeSort=AnyTime&SelectedSearchDate=" + searchDate;
         postData += "&SelectedBuildingID=0";
 
         Log.d("SAR", postData);
 
         return postData;
+    }
+
+    public void setCalendar(Calendar cal){
+        calendar = cal;
+        update();
+    }
+
+    private void update(){
+        nt.loadRoomHours(calendar, roomID, new NetTasks.HoursTaskListener() {
+            @Override
+            public void hoursLoaded(int[] h) {
+                if(h == null) return;
+                hours=h;
+                notifyDataSetChanged();
+                notifyDataSetInvalidated();
+                nt.loadRoomReservations(calendar, roomID, new NetTasks.ReservationsTaskListener() {
+                    @Override
+                    public void reservationsLoaded(List<Reservation> res) {
+                        reservations=res;
+                        notifyDataSetChanged();
+                        notifyDataSetInvalidated();
+                    }
+                });
+            }
+        });
+    }
+
+    public Calendar getCalendar(){
+        return calendar;
     }
 }
