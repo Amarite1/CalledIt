@@ -13,12 +13,15 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.CookieManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 public class ReserveActivity extends AppCompatActivity {
 
@@ -68,6 +71,7 @@ public class ReserveActivity extends AppCompatActivity {
             @Override
             public void onPageStarted(WebView view, String url, Bitmap facIcon){
                 pb.setVisibility(View.VISIBLE);
+                webView.setClickable(false); //should prevent accidental taps
             }
 
             @Override
@@ -83,8 +87,11 @@ public class ReserveActivity extends AppCompatActivity {
                 } else if(tryPostAgain && url.toLowerCase().contains("search")){
                     tryPostAgain = false;
                     webView.postUrl(initialUrl, postData.getBytes());
+                }else if(url.contains("registration") && prefs.contains("phone")){
+                    webView.loadUrl("javascript:(function(){$('#Phone').val('" + prefs.getString("phone", "") + "');})()");
                 }
                 pb.setVisibility(View.GONE);
+                webView.setClickable(true); //stop preventing accidental taps
             }
         });
 
@@ -112,17 +119,36 @@ public class ReserveActivity extends AppCompatActivity {
             case R.id.menu_username:
 
                 AlertDialog.Builder adb = new AlertDialog.Builder(this);
-                adb.setTitle("Set Saved Username");
+                adb.setTitle("Set User Options");
 
-                final EditText et = new EditText(this);
-                if(prefs.contains("username")) et.setText(prefs.getString("username", ""));
-                et.setHint("12ab34");
+                final LinearLayout ll = new LinearLayout(this);
+                ll.setOrientation(LinearLayout.VERTICAL);
+                ll.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-                adb.setView(et);
+                final TextView utv = new TextView(this);
+                utv.setText("Dibs Username:");
+                final EditText uet = new EditText(this);
+                if(prefs.contains("username")) uet.setText(prefs.getString("username", ""));
+                uet.setHint("12ab34");
+                ll.addView(utv);
+                ll.addView(uet);
+
+                final TextView ptv = new TextView(this);
+                ptv.setText("Your Phone Number:");
+                final EditText pet = new EditText(this);
+                if(prefs.contains("phone")) pet.setText(prefs.getString("phone", ""));
+                pet.setHint("123456789");
+                ll.addView(ptv);
+                ll.addView(pet);
+
+                adb.setView(ll);
                 adb.setPositiveButton("Save", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        PreferenceManager.getDefaultSharedPreferences(_this).edit().putString("username", et.getText().toString()).apply();
+                        PreferenceManager.getDefaultSharedPreferences(_this).edit()
+                                .putString("username", uet.getText().toString())
+                                .putString("phone", pet.getText().toString())
+                                .apply();
                     }
                 });
                 adb.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
