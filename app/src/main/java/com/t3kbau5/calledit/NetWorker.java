@@ -25,15 +25,15 @@ public class NetWorker extends AsyncTask<String, Void, Void> {
     }
 
     public void loadUrl(String url, NetWorkerListener listener){
-        this.execute(url);
         nwl = listener;
         accept = "*";
+        this.execute(url);
     }
 
     public void loadUrl(String url, String accept, NetWorkerListener listener){
-        this.execute(url);
         nwl = listener;
         this.accept = accept;
+        this.execute(url);
     }
 
     @Override
