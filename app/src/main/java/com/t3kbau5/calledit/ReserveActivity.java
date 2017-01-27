@@ -169,6 +169,8 @@ public class ReserveActivity extends AppCompatActivity {
     public void onBackPressed(){
         if(webView.canGoBack()){
             webView.goBack();
+        }else if(webView.getUrl().toLowerCase().contains("confirmation")){ //if a room was booked, we're done here
+            finish();
         }else{
             finish();
         }

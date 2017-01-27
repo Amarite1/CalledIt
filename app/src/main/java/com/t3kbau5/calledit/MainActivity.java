@@ -30,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
 
         Button btn_reserve = (Button) findViewById(R.id.button_reserve);
         Button btn_rooms = (Button) findViewById(R.id.button_rooms);
+        Button btn_open = (Button) findViewById(R.id.button_open);
+
         btn_rooms.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -41,6 +43,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(_this, ReserveActivity.class);
+                _this.startActivity(intent);
+            }
+        });
+        btn_open.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(_this, OpenRooms.class);
                 _this.startActivity(intent);
             }
         });

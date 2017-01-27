@@ -1,22 +1,33 @@
 package com.t3kbau5.calledit;
 
-import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
-public class RoomListActivity extends AppCompatActivity {
+public class OpenRooms extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_room_list);
+        setContentView(R.layout.activity_open_rooms);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        ListView list_rooms = (ListView) findViewById(R.id.list_rooms);
-        list_rooms.setAdapter(new RoomListAdapter(this, 0));
-        //getActionBar().setDisplayHomeAsUpEnabled(true);
+        ListView roomList = (ListView) findViewById(R.id.roomList);
+        TextView statusText = (TextView) findViewById(R.id.statusText);
+        ProgressBar pb = (ProgressBar) findViewById(R.id.progressBar);
+        pb.setEnabled(true);
+        pb.setVisibility(View.VISIBLE);
+        statusText.setText("Loading... Please Wait.");
+
+        RoomListAdapter rla = new RoomListAdapter(this,1);
+        roomList.setAdapter(rla);
+
+
     }
 
     @Override

@@ -32,4 +32,17 @@
         android:textAppearance="?android:textAppearanceLarge"
         android:textColor="@color/accent"
         android:padding="3dp"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Find Open Rooms"
+        android:id="@+id/button_open"
+        android:background="@drawable/background_roundbutton_purple"
+        android:textAppearance="?android:textAppearanceLarge"
+        android:textColor="@color/accent"
+        android:padding="3dp"
+        android:layout_marginTop="15dp"
+        android:layout_below="@+id/button_rooms"
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>
