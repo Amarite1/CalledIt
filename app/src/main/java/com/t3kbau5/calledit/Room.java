@@ -16,6 +16,8 @@ public class Room implements Serializable{
     public boolean hasPhone = false;
     public int size = 0;
 
+    private boolean hasAttributes = false;
+
 
     public void determineAttributes(){
         String tdesc = description.toLowerCase();
@@ -26,6 +28,12 @@ public class Room implements Serializable{
         if(tdesc.contains("small")) size=1;
         if(tdesc.contains("medium")) size=2;
         if(tdesc.contains("large")) size=3;
+
+        hasAttributes = true;
+    }
+
+    public boolean hasAttributes(){
+        return hasAttributes;
     }
 
 }
