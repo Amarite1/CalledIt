@@ -7,6 +7,9 @@
 
     <!-- For automatically determining phone number -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    
+    <!-- For parsing DIBS texts -->
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
 
     <application
         android:allowBackup="true"
@@ -24,7 +27,15 @@
         <activity android:name=".RoomListActivity" />
         <activity android:name=".RoomInfoActivity" />
         <activity android:name=".ReserveActivity" />
-        <activity android:name=".OpenRooms"></activity>
+        <activity android:name=".OpenRooms" />
+
+        <receiver android:name=".BCR"
+            android:exported="true" >
+            <intent-filter android:priority="1000" >
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+            </intent-filter>
+        </receiver>
+        
     </application>
 
 </manifest>
