@@ -96,12 +96,12 @@ public class PrimaryDatabase {
             Bundle[] reservations = new Bundle[c.getCount()];
 
             Calendar cal = Calendar.getInstance();
-            int today = cal.get(Calendar.DAY_OF_MONTH)*10000 + cal.get(Calendar.MONTH)*100 + cal.get(Calendar.YEAR);
+            int today = cal.get(Calendar.DAY_OF_MONTH)*1000000 + cal.get(Calendar.MONTH)*10000 + cal.get(Calendar.YEAR);
 
             while(c.moveToNext()){
 
                 //cleanup old reservations if they're still in the DB
-                if(c.getInt(2) < today){
+                if(c.getInt(2) > today){
                     deleteReservation(c.getInt(0));
                     continue;
                 }

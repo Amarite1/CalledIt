@@ -57,10 +57,10 @@ public class RoomListAdapter extends BaseAdapter {
                         for(int i=0; i<rooms.size(); i++){
                             final Room room = rooms.get(i);
                             final int finalI = i;
+                            final int time = now.get(Calendar.HOUR_OF_DAY)*10000 + now.get(Calendar.MINUTE)*100;
                             nt.loadRoomReservations(now, room.id, new NetTasks.ReservationsTaskListener() {
                                 @Override
                                 public void reservationsLoaded(List<Reservation> reservations) {
-                                    int time = now.get(Calendar.HOUR_OF_DAY)*10000 + now.get(Calendar.MINUTE)*100;
 
                                     boolean addRoom = true;
                                     for(int j=0; j<reservations.size(); j++){

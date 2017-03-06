@@ -66,7 +66,7 @@ public class ReservationsAdapter extends BaseAdapter {
         //}
 
         roomText.setText("BMH " + res.getInt("room"));
-        String tstr = res.getInt("date")/10000 + "/" + (res.getInt("date")%10000)/100 + "/" + res.getInt("date")%100;
+        String tstr = res.getInt("date")/1000000 + "/" + (res.getInt("date")%1000000)/10000 + "/" + res.getInt("date")%10000;
         tstr += " " + res.getInt("time")/100 + ":" + res.getInt("time")%100;
         timeText.setText(tstr);
 
