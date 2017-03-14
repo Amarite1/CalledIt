@@ -58,39 +58,61 @@ public class RoomListAdapter extends BaseAdapter {
                             final Room room = rooms.get(i);
                             final int finalI = i;
                             final int time = now.get(Calendar.HOUR_OF_DAY)*10000 + now.get(Calendar.MINUTE)*100;
-                            nt.loadRoomReservations(now, room.id, new NetTasks.ReservationsTaskListener() {
+
+                            nt.loadRoomHours(now, room.id, new NetTasks.HoursTaskListener() {
                                 @Override
-                                public void reservationsLoaded(List<Reservation> reservations) {
+                                public void hoursLoaded(int[] hours) {
+                                    if(hours != null && time >= hours[0]/100 && time <= hours[1]/100){
+                                        nt.loadRoomReservations(now, room.id, new NetTasks.ReservationsTaskListener() {
+                                            @Override
+                                            public void reservationsLoaded(List<Reservation> reservations) {
 
-                                    boolean addRoom = true;
-                                    for(int j=0; j<reservations.size(); j++){
-                                        Reservation res = reservations.get(j);
-                                        if(res.start <= time && time <= res.end){
-                                            if((res.end-res.start) >10000 && res.start >= time-10000) { //booking longer than 1 hr and started at least 1 hr ago
-                                                room.name = room.name + " (Possible)";
-                                                break;
+                                                boolean addRoom = true;
+                                                for(int j=0; j<reservations.size(); j++){
+                                                    Reservation res = reservations.get(j);
+                                                    if(res.start <= time && time <= res.end){
+                                                        if((res.end-res.start) >10000 && res.start >= time-10000) { //booking longer than 1 hr and started at least 1 hr ago
+                                                            room.name = room.name + " (Possible)";
+                                                            break;
+                                                        }
+                                                        addRoom = false;
+                                                        break;
+                                                    }
+                                                }
+
+                                                if(addRoom) roomData.add(room);
+
+                                                if(finalI +1 == rooms.size()){
+                                                    notifyDataSetChanged();
+                                                    notifyDataSetInvalidated();
+
+                                                    if(activity.getClass() != OpenRooms.class) return; //if this isn't the activity we expect
+                                                    activity.findViewById(R.id.progressBar).setVisibility(View.GONE);
+                                                    TextView status = (TextView) activity.findViewById(R.id.statusText);
+                                                    if(roomData.size() >0){
+                                                        status.setText("Rooms currently open: (Tap to Book)");
+                                                    }else{
+                                                        status.setText("No rooms currently open!");
+                                                    }
+                                                }
+
                                             }
-                                            addRoom = false;
-                                            break;
+                                        });
+                                    }else{
+                                        if(finalI +1 == rooms.size()){
+                                            notifyDataSetChanged();
+                                            notifyDataSetInvalidated();
+
+                                            if(activity.getClass() != OpenRooms.class) return; //if this isn't the activity we expect
+                                            activity.findViewById(R.id.progressBar).setVisibility(View.GONE);
+                                            TextView status = (TextView) activity.findViewById(R.id.statusText);
+                                            if(roomData.size() >0){
+                                                status.setText("Rooms currently open: (Tap to Book)");
+                                            }else{
+                                                status.setText("No rooms currently open!");
+                                            }
                                         }
                                     }
-
-                                    if(addRoom) roomData.add(room);
-
-                                    if(finalI +1 == rooms.size()){
-                                        notifyDataSetChanged();
-                                        notifyDataSetInvalidated();
-
-                                        if(activity.getClass() != OpenRooms.class) return; //if this isn't the activity we expect
-                                        activity.findViewById(R.id.progressBar).setVisibility(View.GONE);
-                                        TextView status = (TextView) activity.findViewById(R.id.statusText);
-                                        if(roomData.size() >0){
-                                            status.setText("Rooms currently open: (Tap to Book)");
-                                        }else{
-                                            status.setText("No rooms currently open!");
-                                        }
-                                    }
-
                                 }
                             });
                         }

@@ -5,8 +5,11 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.provider.BaseColumns;
+import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 
 public class PrimaryDatabase {
@@ -93,15 +96,17 @@ public class PrimaryDatabase {
         Cursor c = db.rawQuery("SELECT * FROM " + ReservationsStructure.TABLE_NAME, null);
 
         if(c.getCount() > 0){
-            Bundle[] reservations = new Bundle[c.getCount()];
+            List<Bundle> reservations = new ArrayList<>();
 
             Calendar cal = Calendar.getInstance();
-            int today = cal.get(Calendar.DAY_OF_MONTH)*1000000 + cal.get(Calendar.MONTH)*10000 + cal.get(Calendar.YEAR);
+            int today = cal.get(Calendar.DAY_OF_MONTH) + (cal.get(Calendar.MONTH)+1)*10000 + cal.get(Calendar.YEAR)*1000000;
 
             while(c.moveToNext()){
 
                 //cleanup old reservations if they're still in the DB
-                if(c.getInt(2) > today){
+
+                Log.d(TAG, c.getInt(2) + " ? " + today);
+                if(c.getInt(2) < today){
                     deleteReservation(c.getInt(0));
                     continue;
                 }
@@ -112,10 +117,10 @@ public class PrimaryDatabase {
                 b.putInt("time", c.getInt(3));
                 b.putInt("duration", c.getInt(4));
 
-                reservations[c.getPosition()] = b;
+                reservations.add(b);
             }
 
-            return reservations;
+            return ((Bundle[]) reservations.toArray());
         }else{
             return new Bundle[0];
         }
@@ -124,7 +129,7 @@ public class PrimaryDatabase {
     public boolean deleteReservation(int id){
         if(!isOpen) return false;
 
-        db.execSQL("DELETE FROM " + ReservationsStructure.TABLE_NAME + " WHERE " + ReservationsStructure.COLUMN_NAME_ID + "=" + id);
+        db.execSQL("DELETE FROM " + ReservationsStructure.TABLE_NAME + " WHERE " + ReservationsStructure.COLUMN_NAME_ID + " = " + id);
 
         return true;
     }
