@@ -90,7 +90,7 @@ public class PrimaryDatabase {
         return true;
     }
 
-    public Bundle[] getReservations(){
+    public List<Bundle> getReservations(){
         if(!isOpen) return null;
 
         Cursor c = db.rawQuery("SELECT * FROM " + ReservationsStructure.TABLE_NAME, null);
@@ -99,7 +99,7 @@ public class PrimaryDatabase {
             List<Bundle> reservations = new ArrayList<>();
 
             Calendar cal = Calendar.getInstance();
-            int today = cal.get(Calendar.DAY_OF_MONTH) + (cal.get(Calendar.MONTH)+1)*10000 + cal.get(Calendar.YEAR)*1000000;
+            int today = cal.get(Calendar.DAY_OF_MONTH)*100 + (cal.get(Calendar.MONTH)+1) + cal.get(Calendar.YEAR)*10000;
 
             while(c.moveToNext()){
 
@@ -120,9 +120,9 @@ public class PrimaryDatabase {
                 reservations.add(b);
             }
 
-            return ((Bundle[]) reservations.toArray());
+            return reservations;
         }else{
-            return new Bundle[0];
+            return new ArrayList<Bundle>();
         }
     }
 

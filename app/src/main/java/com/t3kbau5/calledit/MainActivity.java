@@ -19,6 +19,8 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 public class MainActivity extends AppCompatActivity {
 
 
@@ -28,11 +30,15 @@ public class MainActivity extends AppCompatActivity {
     private Activity _this = this;
 
     private SharedPreferences prefs;
+    private FirebaseAnalytics mFirebaseAnalytics;
+    private ReservationsAdapter ra;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         Button btn_reserve = (Button) findViewById(R.id.button_reserve);
         Button btn_rooms = (Button) findViewById(R.id.button_rooms);
@@ -61,7 +67,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        list_reservations.setAdapter(new ReservationsAdapter(this));
+        ra = new ReservationsAdapter(this);
+        list_reservations.setAdapter(ra);
 
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
         int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE);
@@ -160,5 +167,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         adb.show();
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        ra.refresh();
     }
 }

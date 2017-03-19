@@ -8,28 +8,27 @@ import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.List;
+
 public class ReservationsAdapter extends BaseAdapter {
 
     private Context context;
-    private Bundle[] reservations;
+    private List<Bundle> reservations;
     private int rtid=1, ttid=2;
 
     public ReservationsAdapter(Context context){
         this.context = context;
-        PrimaryDatabase pdb = new PrimaryDatabase(context);
-        pdb.open();
-        reservations = pdb.getReservations();
-        pdb.close();
+        refresh();
     }
 
     @Override
     public int getCount() {
-        return reservations.length;
+        return reservations.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return reservations[position];
+        return reservations.get(position);
     }
 
     @Override
@@ -40,7 +39,7 @@ public class ReservationsAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        Bundle res = reservations[position];
+        Bundle res = reservations.get(position);
 
         LinearLayout ll;
         TextView roomText, timeText;
@@ -66,7 +65,7 @@ public class ReservationsAdapter extends BaseAdapter {
         //}
 
         roomText.setText("BMH " + res.getInt("room"));
-        String tstr = res.getInt("date")/1000000 + "/" + (res.getInt("date")%1000000)/10000 + "/" + res.getInt("date")%10000;
+        String tstr = res.getInt("date")/10000 + "/" + (res.getInt("date")%10000)/100 + "/" + res.getInt("date")%100;
         tstr += " " + res.getInt("time")/100 + ":" + res.getInt("time")%100;
         timeText.setText(tstr);
 
@@ -74,5 +73,12 @@ public class ReservationsAdapter extends BaseAdapter {
         ll.addView(timeText);
 
         return ll;
+    }
+
+    public void refresh(){
+        PrimaryDatabase pdb = new PrimaryDatabase(context);
+        pdb.open();
+        reservations = pdb.getReservations();
+        pdb.close();
     }
 }
