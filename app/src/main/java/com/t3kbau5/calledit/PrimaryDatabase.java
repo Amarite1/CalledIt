@@ -99,7 +99,7 @@ public class PrimaryDatabase {
             List<Bundle> reservations = new ArrayList<>();
 
             Calendar cal = Calendar.getInstance();
-            int today = cal.get(Calendar.DAY_OF_MONTH)*100 + (cal.get(Calendar.MONTH)+1) + cal.get(Calendar.YEAR)*10000;
+            int today = cal.get(Calendar.DAY_OF_MONTH) + (cal.get(Calendar.MONTH)+1)*100 + cal.get(Calendar.YEAR)*10000;
 
             while(c.moveToNext()){
 

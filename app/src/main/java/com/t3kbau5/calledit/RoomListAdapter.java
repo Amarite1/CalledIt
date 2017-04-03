@@ -62,7 +62,7 @@ public class RoomListAdapter extends BaseAdapter {
                             nt.loadRoomHours(now, room.id, new NetTasks.HoursTaskListener() {
                                 @Override
                                 public void hoursLoaded(int[] hours) {
-                                    if(hours != null && time >= hours[0]/100 && time <= hours[1]/100){
+                                    if(hours != null && time >= hours[0] && time <= hours[1]){
                                         nt.loadRoomReservations(now, room.id, new NetTasks.ReservationsTaskListener() {
                                             @Override
                                             public void reservationsLoaded(List<Reservation> reservations) {

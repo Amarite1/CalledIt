@@ -38,7 +38,7 @@ public class BCR extends BroadcastReceiver {
                         if(words[i].matches("\\d{1,2}\\/\\d{1,2}\\/\\d{4}")){
                             String[] tmp = words[i].split("/");
                             dateS = (tmp[0].length()==1?"0"+tmp[0]:tmp[0]) + (tmp[1].length()==1?"0"+tmp[1]:tmp[1]) + tmp[2];
-                            dateS = dateS.substring(4) + dateS.substring(2,4) + dateS.substring(0, 2);
+                            dateS = dateS.substring(4) + dateS.substring(0, 2) + dateS.substring(2,4);
                         }else if(words[i].matches("\\d{1,2}:\\d{2}")){
                             timeS = words[i] +" " + words[i+1];
                         }else if(words[i].toLowerCase().contains("bmh")){
