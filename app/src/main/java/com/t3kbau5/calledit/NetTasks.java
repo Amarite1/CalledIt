@@ -36,7 +36,7 @@ public class NetTasks {
 
     public void loadRooms(final RoomTaskListener listener){
         NetWorker nw = new NetWorker();
-        nw.loadUrl("http://queensu.evanced.info/dibsapi/rooms", "text/json", new NetWorker.NetWorkerListener() {
+        nw.loadUrl("https://queensu.evanced.info/dibsapi/rooms", "text/json", new NetWorker.NetWorkerListener() {
             @Override
             public void onDataReceived(String data) {
                 final List<Room> rooms = new ArrayList<Room>();
@@ -85,7 +85,7 @@ public class NetTasks {
 
     public void loadRoomReservations(Calendar date, int roomID, final ReservationsTaskListener listener){
         NetWorker nw = new NetWorker();
-        nw.loadUrl("http://queensu.evanced.info/dibsapi/reservations/" + date.get(Calendar.YEAR) + "-" + (date.get(Calendar.MONTH)+1) + "-" + date.get(Calendar.DAY_OF_MONTH) + "/" + roomID, "text/json", new NetWorker.NetWorkerListener() {
+        nw.loadUrl("https://queensu.evanced.info/dibsapi/reservations/" + date.get(Calendar.YEAR) + "-" + (date.get(Calendar.MONTH)+1) + "-" + date.get(Calendar.DAY_OF_MONTH) + "/" + roomID, "text/json", new NetWorker.NetWorkerListener() {
             @Override
             public void onDataReceived(String data) {
                 try {
@@ -137,7 +137,7 @@ public class NetTasks {
 
     public void loadRoomHours(Calendar date, int roomID, final HoursTaskListener listener){
         NetWorker nw = new NetWorker();
-        String url = "http://queensu.evanced.info/dibsapi/roomHours/" + date.get(Calendar.YEAR) + "-" + (date.get(Calendar.MONTH)+1) + "-" + date.get(Calendar.DAY_OF_MONTH) + "/" + roomID;
+        String url = "https://queensu.evanced.info/dibsapi/roomHours/" + date.get(Calendar.YEAR) + "-" + (date.get(Calendar.MONTH)+1) + "-" + date.get(Calendar.DAY_OF_MONTH) + "/" + roomID;
         Log.d("url", url);
         nw.loadUrl(url, "text/json", new NetWorker.NetWorkerListener() {
             @Override

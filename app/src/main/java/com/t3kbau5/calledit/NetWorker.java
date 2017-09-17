@@ -52,6 +52,7 @@ public class NetWorker extends AsyncTask<String, Void, Void> {
             if(response >= 300){
                 con.disconnect();
                 nwl.onLoadError(response);
+                return null;
             }
             InputStreamReader is = new InputStreamReader(con.getInputStream());
             BufferedReader reader = new BufferedReader(is);
