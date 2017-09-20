@@ -5,16 +5,19 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.CookieManager;
+import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -41,7 +44,7 @@ public class ReserveActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
-        initialUrl = "https://queensu.evanced.info/dibs/";
+        initialUrl = "https://queensu.evanced.info/Dibs/";
 
         if(intent.hasExtra("postData")){
             initialUrl +="registration";
@@ -49,6 +52,8 @@ public class ReserveActivity extends AppCompatActivity {
 
         }else if(intent.hasExtra("roomID")){
             initialUrl += "?space=" + intent.getIntExtra("roomID", -1);
+        }else{
+            initialUrl += "Search";
         }
 
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -56,6 +61,7 @@ public class ReserveActivity extends AppCompatActivity {
         webView = (WebView) findViewById(R.id.webView);
         WebSettings ws = webView.getSettings();
         ws.setJavaScriptEnabled(true);
+        if(Build.VERSION.SDK_INT >= 21) ws.setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
 
         final CookieManager cm = CookieManager.getInstance();
         cm.setAcceptCookie(true);
@@ -72,17 +78,27 @@ public class ReserveActivity extends AppCompatActivity {
             public void onPageStarted(WebView view, String url, Bitmap facIcon){
                 pb.setVisibility(View.VISIBLE);
                 webView.setClickable(false); //should prevent accidental taps
+                Log.d("URL", url);
+                if(url.toLowerCase().contains("/login") && cm.getCookie(url) != null && cm.getCookie(url).contains("AWSELB")){
+                    cm.removeSessionCookie();
+                    /*webView.stopLoading();
+                    webView.loadUrl(url);*/
+                }
             }
 
             @Override
             public void onPageFinished(WebView view, String url) {
-                if(url.toLowerCase().contains("login")){
+                Log.d("URL", url);
+                //Log.d("Cookie", cm.getCookie(url));
+                if(url.toLowerCase().contains("/login")) {
 
-                    if(postData != "") tryPostAgain = true;
+                    if (postData != "") tryPostAgain = true;
 
-                    if(prefs.contains("username")) {
+                    if (prefs.contains("username")) {
                         webView.loadUrl("javascript:(function(){$('#txtUsername').val('" + prefs.getString("username", "") + "');})()");
                     }
+                    //prefs.edit().putString("cookies", cm.getCookie(url)).putString("curl", url).apply();
+                }else if(url.toLowerCase().contains("ldaplogin")){
                     prefs.edit().putString("cookies", cm.getCookie(url)).putString("curl", url).apply();
                 } else if(tryPostAgain && url.toLowerCase().contains("search")){
                     tryPostAgain = false;
